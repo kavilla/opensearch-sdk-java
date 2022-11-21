@@ -10,7 +10,7 @@
  */
 
 import { withTimeout } from '@osd/std';
-import { PluginName, PluginOpaqueId } from '../../server';
+import { ExtensionName, ExtensionOpaqueId } from '../server';
 import { CoreService } from '../../types';
 import { CoreContext } from '../core_system';
 import { ExtensionWrapper } from './extension';
@@ -45,14 +45,14 @@ export interface ExtensionsServiceStart {
  */
 export class ExtensionsService implements CoreService<ExtensionsServiceSetup, ExtensionsServiceStart> {
   /** Extension wrappers in topological order. */
-  private readonly extensions = new Map<PluginName, ExtensionWrapper<unknown, unknown>>();
-  private readonly extensionDependencies = new Map<PluginName, PluginName[]>();
+  private readonly extensions = new Map<ExtensionName, ExtensionWrapper<unknown, unknown>>();
+  private readonly extensionDependencies = new Map<ExtensionName, ExtensionName[]>();
 
-  private readonly setupExtensions: PluginName[] = [];
+  private readonly setupExtensions: ExtensionName[] = [];
 
   constructor(private readonly coreContext: CoreContext, extensions: InjectedPluginMetadata[]) {
     // Generate opaque ids
-    const opaqueIds = new Map<PluginName, PluginOpaqueId>(extensions.map((p) => [p.id, Symbol(p.id)]));
+    const opaqueIds = new Map<ExtensionName, ExtensionOpaqueId>(extensions.map((p) => [p.id, Symbol(p.id)]));
 
     // Setup dependency map and extension wrappers
     extensions.forEach(({ id, extension, config = {} }) => {
@@ -74,7 +74,7 @@ export class ExtensionsService implements CoreService<ExtensionsServiceSetup, Ex
     });
   }
 
-  public getOpaqueIds(): ReadonlyMap<PluginOpaqueId, PluginOpaqueId[]> {
+  public getOpaqueIds(): ReadonlyMap<ExtensionOpaqueId, ExtensionOpaqueId[]> {
     // Return dependency map of opaque ids
     return new Map(
       [...this.extensionDependencies].map(([id, deps]) => [
@@ -98,7 +98,7 @@ export class ExtensionsService implements CoreService<ExtensionsServiceSetup, Ex
 
           return depContracts;
         },
-        {} as Record<PluginName, unknown>
+        {} as Record<ExtensionName, unknown>
       );
 
       const contract = await withTimeout({
@@ -132,7 +132,7 @@ export class ExtensionsService implements CoreService<ExtensionsServiceSetup, Ex
 
           return depContracts;
         },
-        {} as Record<PluginName, unknown>
+        {} as Record<ExtensionName, unknown>
       );
 
       const contract = await withTimeout({

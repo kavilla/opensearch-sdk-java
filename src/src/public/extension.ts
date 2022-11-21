@@ -11,7 +11,7 @@
 
 import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { DiscoveredPlugin, PluginOpaqueId } from '../../server';
+import { DiscoveredExtension, ExtensionOpaqueId } from '../server';
 import { ExtensionInitializerContext } from './extension_context';
 import { read } from './extension_reader';
 import { CoreStart, CoreSetup } from '..';
@@ -57,24 +57,24 @@ export class ExtensionWrapper<
   TExtensionsSetup extends object = object,
   TExtensionsStart extends object = object
 > {
-  public readonly name: DiscoveredPlugin['id'];
-  public readonly configPath: DiscoveredPlugin['configPath'];
-  public readonly requiredPlugins: DiscoveredPlugin['requiredPlugins'];
-  public readonly optionalPlugins: DiscoveredPlugin['optionalPlugins'];
+  public readonly name: DiscoveredExtension['id'];
+  public readonly configPath: DiscoveredExtension['configPath'];
+  public readonly requiredExtensions: DiscoveredExtension['requiredExtensions'];
+  public readonly optionalExtensions: DiscoveredExtension['optionalExtensions'];
   private instance?: Extension<TSetup, TStart, TExtensionsSetup, TExtensionsStart>;
 
   private readonly startDependencies$ = new Subject<[CoreStart, TExtensionsStart, TStart]>();
   public readonly startDependencies = this.startDependencies$.pipe(first()).toPromise();
 
   constructor(
-    public readonly discoveredPlugin: DiscoveredPlugin,
-    public readonly opaqueId: PluginOpaqueId,
+    public readonly discoveredPlugin: DiscoveredExtension,
+    public readonly opaqueId: ExtensionOpaqueId,
     private readonly initializerContext: ExtensionInitializerContext
   ) {
     this.name = discoveredPlugin.id;
     this.configPath = discoveredPlugin.configPath;
-    this.requiredPlugins = discoveredPlugin.requiredPlugins;
-    this.optionalPlugins = discoveredPlugin.optionalPlugins;
+    this.requiredExtensions = discoveredPlugin.requiredExtensions;
+    this.optionalExtensions = discoveredPlugin.optionalExtensions;
   }
 
   /**

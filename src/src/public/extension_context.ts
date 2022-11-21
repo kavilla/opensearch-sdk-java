@@ -10,8 +10,8 @@
  */
 
 import { omit } from 'lodash';
-import { DiscoveredPlugin } from '../../server';
-import { PluginOpaqueId, PackageInfo, EnvironmentMode } from '../../server/types';
+import { DiscoveredExtension } from '../server';
+import { ExtensionOpaqueId, PackageInfo, EnvironmentMode } from '../server/types';
 import { CoreContext } from '../core_system';
 import { ExtensionWrapper } from './extension';
 import { ExtensionsServiceSetupDeps, ExtensionsServiceStartDeps } from './extensions_service';
@@ -26,7 +26,7 @@ export interface ExtensionInitializerContext<ConfigSchema extends object = objec
   /**
    * A symbol used to identify this extension in the system. Needed when registering handlers or context providers.
    */
-  readonly opaqueId: PluginOpaqueId;
+  readonly opaqueId: ExtensionOpaqueId;
   readonly env: {
     mode: Readonly<EnvironmentMode>;
     packageInfo: Readonly<PackageInfo>;
@@ -49,7 +49,7 @@ export interface ExtensionInitializerContext<ConfigSchema extends object = objec
 export function createExtensionInitializerContext(
   coreContext: CoreContext,
   opaqueId: PluginOpaqueId,
-  extensionManifest: DiscoveredPlugin,
+  extensionManifest: DiscoveredExtension,
   extensionConfig: {
     [key: string]: unknown;
   }
